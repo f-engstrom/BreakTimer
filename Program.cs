@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using System.Text;
 using System.Threading;
 using System.Xml.Serialization;
 
@@ -14,6 +15,7 @@ namespace BreakTimer
 
             
             BreakStudyTimer myBreakStudyTimer = new BreakStudyTimer();
+            myBreakStudyTimer.VersionChooser();
             myBreakStudyTimer.Menu();
 
            
@@ -25,9 +27,12 @@ namespace BreakTimer
         
     }
 
- 
 
 
+
+    #region studytimedurationclass
+
+    
 
 
     class SchoolDayTime
@@ -47,6 +52,13 @@ namespace BreakTimer
             DurationCalculator();
         }
 
+        public SchoolDayTime(string startTime)
+        {
+            StartTime = startTime;
+
+
+        }
+
         private void DurationCalculator()
         { 
          Duration = DateTime.Parse(EndTime).Subtract(DateTime.Parse(StartTime));
@@ -55,6 +67,13 @@ namespace BreakTimer
 
 
     }
+
+    #endregion
+
+
+    #region breakclass
+
+
 
     class ABreak
         //class that contains the information for a break
@@ -84,106 +103,186 @@ namespace BreakTimer
             return "|Break start time: " + BreakStartTime + "| Break end time: " + BreakEndTime + "| Duration: " + BreakDuration + " |";
         }
     }
+    #endregion
+
+
+    #region menuartclass
+
+
 
     class MenuArt
     //Class to hold menu art
     {
         public string[] art = new[]
         {
-            @"###                                                                                                                                           #####  ",
-            @" #   ####     # #####    ##### # #    # ######    ######  ####  #####       ##      #####  #####  ######   ##   #    #    #   # ###### ##### #     # ",
-            @" #  #         #   #        #   # ##  ## #         #      #    # #    #     #  #     #    # #    # #       #  #  #   #      # #  #        #         # ",
-            @" #   ####     #   #        #   # # ## # #####     #####  #    # #    #    #    #    #####  #    # #####  #    # ####        #   #####    #      ###  ",
-            @" #       #    #   #        #   # #    # #         #      #    # #####     ######    #    # #####  #      ###### #  #        #   #        #      #    ",
-            @" #  #    #    #   #        #   # #    # #         #      #    # #   #     #    #    #    # #   #  #      #    # #   #       #   #        #           ",
-            @"###  ####     #   #        #   # #    # ######    #       ####  #    #    #    #    #####  #    # ###### #    # #    #      #   ######   #      #    ",
+            @"###                                                                              #####  ",
+            @" #   ####     # #####  #####  #####  ######   ##   #    #    #   # ###### ##### #     # ",
+            @" #  #         #   #    #    # #    # #       #  #  #   #      # #  #        #         # ",
+            @" #   ####     #   #    #####  #    # #####  #    # ####        #   #####    #      ###  ",
+            @" #       #    #   #    #    # #####  #      ###### #  #        #   #        #      #    ",
+            @" #  #    #    #   #    #    # #   #  #      #    # #   #       #   #        #           ",
+            @"###  ####     #   #    #####  #    # ###### #    # #    #      #   ######   #      #    ",
         };
+
+        public void ArtPrinter()
+        {
+            Console.WindowWidth = 100;
+            Console.WriteLine("\n\n");
+            foreach (var line in art)
+            {
+                Console.WriteLine(line);
+            }
+        }
     }
+
+    #endregion
+
+    #region breakstudytimerclass
+
 
 
     class BreakStudyTimer
     {
         //Struct list to keep track of break times and duration
+
         private List<ABreak> myBreaks = new List<ABreak>();
         private TimeSpan dayDuration;
         private bool breakTaken = false;
         MenuArt myMenuArt = new MenuArt();
-        public void Menu()
-        {
-            //standard values for duration of day to be set if user does not change them
-            string startTime = "08:30";
-            string endTime = "15:00";
+        private SchoolDayTime mySchoolday;
+        private bool schoolBreakTracker = false;
 
-            //Gives user the option to change duration of the "school day"
+
+        #region versionchoice
+
+        
+
+        
+        public void VersionChooser()
+        {
+            Console.SetCursorPosition(5, 5);
+            Console.WriteLine("What version are you using today?");
             Console.SetCursorPosition(5, 7);
-            Console.WriteLine("Current School day duration: 08.30 - 15:00\n");
+            Console.WriteLine("1. School break tracker ");
             Console.SetCursorPosition(5, 9);
-            Console.WriteLine(@"Do you want to change it? Y\N ?");
+            Console.WriteLine("2. Study break tracker ");
 
             ConsoleKeyInfo keyPressed;
             bool invalidKeyPress = true;
-
-
 
 
             do
             {
                 keyPressed = Console.ReadKey(true);
 
-                invalidKeyPress = !(keyPressed.Key == ConsoleKey.Y || keyPressed.Key == ConsoleKey.N);
+                invalidKeyPress = !(keyPressed.Key == ConsoleKey.D1 || keyPressed.Key == ConsoleKey.D2);
 
             } while (invalidKeyPress);
 
-            Console.Clear();
-
-            if (keyPressed.KeyChar == 'y')
+            if (keyPressed.Key == ConsoleKey.D1)
             {
-                Console.SetCursorPosition(5, 7);
-                Console.WriteLine("Start of day: ");
-                Console.SetCursorPosition(5, 9);
-                Console.WriteLine("End of day: ");
-                Console.SetCursorPosition(20, 7);
-                startTime = Console.ReadLine();
-                Console.SetCursorPosition(20, 9);
-                endTime = Console.ReadLine();
+                
+                //standard values for duration of day to be set if user does not change them
+                string startTime = "08:30";
+                string endTime = "15:00";
+
+                //Gives user the option to change duration of the "school day"
                 Console.Clear();
                 Console.SetCursorPosition(5, 7);
-                Console.WriteLine("Time Successfully changed");
-                Thread.Sleep(1000);
+                Console.WriteLine("Current School day duration: 08.30 - 15:00\n");
+                Console.SetCursorPosition(5, 9);
+                Console.WriteLine(@"Do you want to change it? Y\N ?");
 
+
+
+                do
+                {
+                    keyPressed = Console.ReadKey(true);
+
+                    invalidKeyPress = !(keyPressed.Key == ConsoleKey.Y || keyPressed.Key == ConsoleKey.N);
+
+                } while (invalidKeyPress);
+
+                Console.Clear();
+
+                if (keyPressed.KeyChar == 'y')
+                {
+                    Console.SetCursorPosition(5, 7);
+                    Console.WriteLine("Start of day: ");
+                    Console.SetCursorPosition(5, 9);
+                    Console.WriteLine("End of day: ");
+                    Console.SetCursorPosition(20, 7);
+                    startTime = Console.ReadLine();
+                    Console.SetCursorPosition(20, 9);
+                    endTime = Console.ReadLine();
+                    Console.Clear();
+                    Console.SetCursorPosition(5, 7);
+                    Console.WriteLine("Time Successfully changed");
+                    Thread.Sleep(1000);
+
+                }
+                else if (keyPressed.KeyChar == 'n')
+                {
+                    Console.SetCursorPosition(5, 7);
+                    Console.WriteLine("Time Accepted");
+                    Thread.Sleep(1000);
+                }
+
+                mySchoolday = new SchoolDayTime(startTime, endTime);
+                dayDuration = mySchoolday.Duration;
+                schoolBreakTracker = true;
             }
-            else if (keyPressed.KeyChar == 'n')
+            else if (keyPressed.Key == ConsoleKey.D2)
             {
-                Console.SetCursorPosition(5, 7);
-                Console.WriteLine("Time Accepted");
-                Thread.Sleep(1000);
+                string studyDayStart = DateTime.Now.ToString("HH:mm");
+
+                mySchoolday= new SchoolDayTime(studyDayStart);
+
             }
+            
 
-            SchoolDayTime mySchoolday = new SchoolDayTime(startTime, endTime);
-            dayDuration= mySchoolday.Duration;
+        }
+        #endregion
 
+        #region menu
+
+        
+
+        public void Menu()
+        {
+            
             int choice;
+
             do
             {
-
-                //Console.Clear();
-                //Console.WindowWidth = 160;
-                //Console.WriteLine("\n\n");
-                //foreach (var line in myMenuArt.art )
-                //{
-                //    Console.WriteLine(line);
-                //}
                 Console.Clear();
-                ArtPrinter();
-
+              
                 
-                Console.WriteLine($"\nSchool day duration: {mySchoolday.StartTime} - {mySchoolday.EndTime} Duration time: {mySchoolday.Duration}\n");
+                myMenuArt.ArtPrinter();
+
+                if (schoolBreakTracker)
+                {
+                    Console.WriteLine($"\nSchool day duration: {mySchoolday.StartTime} - {mySchoolday.EndTime} Duration time: {mySchoolday.Duration}\n");
+
+                }
+                else
+                {
+                    
+                    dayDuration = DateTime.Now.Subtract(DateTime.Parse(mySchoolday.StartTime));
+
+                    Console.WriteLine($"\n Started studying: {mySchoolday.StartTime} Duration: {dayDuration.ToString(@"hh\:mm\:ss")}\n");
+
+                }
+
+
                 Console.WriteLine("1. Start break");
                 Console.WriteLine("2. List breaks");
 
                 Console.WriteLine("3. Exit");
 
+
                 ConsoleKeyInfo userInput = Console.ReadKey(true);
+
 
                 if (char.IsDigit(userInput.KeyChar))
                 {
@@ -206,15 +305,14 @@ namespace BreakTimer
                         if (breakTaken)
                         {
                             Console.Clear();
-                            ArtPrinter();
+                            myMenuArt.ArtPrinter();
                             PrintBreaks();
 
                         }
                         else
                         {
                             Console.Clear();
-                            ArtPrinter();
-                           // Console.SetCursorPosition(5, 7);
+                            myMenuArt.ArtPrinter();
                             Console.WriteLine("\n\n\n\nTake a break First");
                             Thread.Sleep(1000);
                         }
@@ -226,7 +324,13 @@ namespace BreakTimer
             } while (choice != 3);
 
         }
+        #endregion
 
+        #region startstopbreakmethod
+
+        
+
+        
         public void StartStopBreak()
         {
             //Start and stop break
@@ -262,7 +366,14 @@ namespace BreakTimer
             myBreaks.Add(new ABreak(breakStartTime, breakEndTime));
             stateTimer.Dispose();
         }
+        #endregion
 
+
+        #region printbreaksmethod
+
+        
+
+        
         public void PrintBreaks()
             //Print breaks taken
             // print total break time
@@ -295,19 +406,22 @@ namespace BreakTimer
 
 
 
-            Console.WriteLine("\nBreaks to study ratio: " + StudyBreakRatio(totalBreakTime.Minutes) + " %");
+            Console.WriteLine("\nPercent of day on break: " + CalculateStudyBreakRatio(totalBreakTime) + "%");
 
             Console.WriteLine("\nPress any key to return to menu");
             Console.ReadKey();
         }
 
-        public double StudyBreakRatio(double totalBreakTime)
+        #endregion
+
+        #region studybreakratiomethod
+
+
+        public double CalculateStudyBreakRatio(TimeSpan totalBreakTime)
         // calculates how many percent of the day is spent on breaks
         {
-            double totalBreakTimeMinutes = totalBreakTime;
-            double dayDurationMinutes = dayDuration.TotalMinutes;
-
-            double studyBreakRatio = totalBreakTimeMinutes / dayDurationMinutes;
+            
+            double studyBreakRatio = totalBreakTime.TotalMinutes / dayDuration.TotalMinutes;
 
             double studyBreakRatioPercent = studyBreakRatio * 100;
 
@@ -315,24 +429,24 @@ namespace BreakTimer
             return Math.Round(studyBreakRatioPercent, 1);
         }
 
-        public void ArtPrinter()
-        {
-            Console.WindowWidth = 160;
-            Console.WriteLine("\n\n");
-            foreach (var line in myMenuArt.art)
-            {
-                Console.WriteLine(line);
-            }
-        }
+      
 
     }
+    #endregion
+   
+    #endregion
+
+
+    #region timerclass
+
+
 
     class TimerInfo
     // class that contains timer tick for the timer uptick 
     // and reset timer to make sure the timer calculates from when the user starts it
     {
-        public static string BreakTimerStartTime; 
-
+        public static string BreakTimerStartTime;
+        public TimeSpan timeSinceLastBreak;
         public void Tick(Object stateInfo)
         {
             TimeSpan timeSinceLastBreak = DateTime.Now.Subtract(DateTime.Parse(BreakTimerStartTime));
@@ -344,6 +458,15 @@ namespace BreakTimer
 
         }
 
+        public void MenuTick(Object stateInfo)
+        {
+
+            //timeSinceLastBreak = DateTime.Now.Subtract(DateTime.Parse(BreakTimerStartTime));
+
+            
+        }
+
+
         public void resetTimer()
         {
          BreakTimerStartTime = DateTime.Now.ToString("HH:mm:ss");
@@ -353,5 +476,7 @@ namespace BreakTimer
       
 
     }
+    #endregion
+
 
 }
